@@ -16,10 +16,10 @@ import (
 // Tried to make it work with generic interfaces but this is what worked
 func ingestionFactory(filePath string) []interface{} {
 
-	csvFile, _ 		:= os.Open(filePath)
-	reader 			:= csv.NewReader(bufio.NewReader(csvFile))
+	csvFile, _ := os.Open(filePath)
+	reader := csv.NewReader(bufio.NewReader(csvFile))
 
-	var result []interface {}
+	var result []interface{}
 	var i = 0
 
 	for {
@@ -41,49 +41,49 @@ func ingestionFactory(filePath string) []interface{} {
 
 		case FACILITIES_PATH:
 			// we should handle parse errors on these in case csv is corrupted
-			amount, _ 			:= strconv.ParseFloat(line[0], 64)
-			interestRate, _ 	:= strconv.ParseFloat(line[1], 64)
-			id, _ 				:= strconv.Atoi(line[2])
-			bankId, _ 			:= strconv.Atoi(line[3])
+			amount, _ := strconv.ParseFloat(line[0], 64)
+			interestRate, _ := strconv.ParseFloat(line[1], 64)
+			id, _ := strconv.Atoi(line[2])
+			bankId, _ := strconv.Atoi(line[3])
 
 			// we need a slice of pointers here because we would need to operate on the amount in the code
 			// and we dont want a copy we want to be able to change the value as we grant loans
 			result = append(result, &Facility{
-				Amount:     		amount,
-				InterestRate: 		interestRate,
-				Id:           		id,
-				BankId:       		bankId,
+				Amount:       amount,
+				InterestRate: interestRate,
+				Id:           id,
+				BankId:       bankId,
 			})
 
 		case COVENANTS_PATH:
 			// we should handle parse errors on these in case csv is corrupted
-			facilityId, _ 				:= strconv.Atoi(line[0])
-			maxDefaultLikelihood, _ 	:= strconv.ParseFloat(line[1], 64)
-			bankId, _ 					:= strconv.Atoi(line[2])
-			bannedState					:= line[3]
+			facilityId, _ := strconv.Atoi(line[0])
+			maxDefaultLikelihood, _ := strconv.ParseFloat(line[1], 64)
+			bankId, _ := strconv.Atoi(line[2])
+			bannedState := line[3]
 
 			result = append(result, Covenant{
-				FacilityId:           	facilityId,
-				MaxDefaultLikelihood: 	maxDefaultLikelihood,
-				BankId:               	bankId,
-				BannedState:          	bannedState,
+				FacilityId:           facilityId,
+				MaxDefaultLikelihood: maxDefaultLikelihood,
+				BankId:               bankId,
+				BannedState:          bannedState,
 			})
 
 		case LOANS_PATH:
 
 			// we should handle parse errors on these in case csv is corrupted
-			interestRate, _ 			:= strconv.ParseFloat(line[0], 64)
-			amount, _ 					:= strconv.ParseFloat(line[1] ,64)
-			id, _ 						:= strconv.Atoi(line[2])
-			defaultLikelihood, _ 		:= strconv.ParseFloat(line[3], 64)
-			state 						:= line[4]
+			interestRate, _ := strconv.ParseFloat(line[0], 64)
+			amount, _ := strconv.ParseFloat(line[1], 64)
+			id, _ := strconv.Atoi(line[2])
+			defaultLikelihood, _ := strconv.ParseFloat(line[3], 64)
+			state := line[4]
 
 			result = append(result, Loan{
-				InterestRate:     		interestRate,
-				Amount: 				amount,
-				Id:           			id,
-				DefaultLikelihood:  	defaultLikelihood,
-				State: 					state,
+				InterestRate:      interestRate,
+				Amount:            amount,
+				Id:                id,
+				DefaultLikelihood: defaultLikelihood,
+				State:             state,
 			})
 		}
 	}
@@ -91,18 +91,18 @@ func ingestionFactory(filePath string) []interface{} {
 	return result
 }
 
-func ingestData() ([]interface{}, []interface{}, []interface{}){
-	facilities 	:= ingestionFactory(FACILITIES_PATH)
-	covenants 	:= ingestionFactory(COVENANTS_PATH)
-	loans 		:= ingestionFactory(LOANS_PATH)
+func ingestData() ([]interface{}, []interface{}, []interface{}) {
+	facilities := ingestionFactory(FACILITIES_PATH)
+	covenants := ingestionFactory(COVENANTS_PATH)
+	loans := ingestionFactory(LOANS_PATH)
 
 	return facilities, covenants, loans
 }
 
 // Calculates Yield
-func calculateYield (loan Loan, facility *Facility) float64 {
-	return 	(1 - loan.DefaultLikelihood) * (loan.InterestRate * loan.Amount) -
-			(loan.DefaultLikelihood * loan.Amount) - (facility.InterestRate * loan.Amount)
+func calculateYield(loan Loan, facility *Facility) float64 {
+	return (1-loan.DefaultLikelihood)*(loan.InterestRate*loan.Amount) -
+		(loan.DefaultLikelihood * loan.Amount) - (facility.InterestRate * loan.Amount)
 }
 
 // Contains tells whether a contains x.
@@ -145,12 +145,12 @@ func writeCSV(filePath string, data [][]string) {
 	csvFile.Close()
 }
 
-func main(){
+func main() {
 	// ingest data
-	facilities , covenants, loans := ingestData()
+	facilities, covenants, loans := ingestData()
 
 	type coven struct {
-		bannedStates []string
+		bannedStates         []string
 		maxDefaultLikelihood float64
 	}
 
@@ -178,19 +178,19 @@ func main(){
 				cov.MaxDefaultLikelihood,
 			}
 		}
-		
+
 	}
 
 	// Will use these 2 for the output data. Start with length of 1 but will push things in here
-	loansToFacilities 	:= make([]assignment, 0)
-	facilitiesYield 	:= make(map[int]float64)
+	loansToFacilities := make([]assignment, 0)
+	facilitiesYield := make(map[int]float64)
 
 	for i := 0; i < len(loans); i++ {
 
 		var (
-			maxYield float64
+			maxYield        float64
 			electedFacility *Facility
-			winningYield float64
+			winningYield    float64
 		)
 
 		// Had to type cast it to Loan as I've used interface so I can ingest all types
@@ -204,8 +204,8 @@ func main(){
 			facility, _ := facilities[f].(*Facility)
 
 			if
-				// Facility has money left
-				facility.Amount >= loan.Amount &&
+			// Facility has money left
+			facility.Amount >= loan.Amount &&
 
 				// The state of the loan is not banned by covenant
 				!Contains(facCov[facility.Id].bannedStates, loan.State) &&
@@ -213,19 +213,19 @@ func main(){
 				// Max default likelihood of the loan is is within range for the fac:cov
 				facCov[facility.Id].maxDefaultLikelihood >= loan.DefaultLikelihood {
 
-					currentYield := calculateYield(loan, facility)
-					maxYield = Max(currentYield, maxYield)
+				currentYield := calculateYield(loan, facility)
+				maxYield = Max(currentYield, maxYield)
 
-					if maxYield == currentYield {
-						electedFacility = facility
-						winningYield = currentYield
-					}
-
+				if maxYield == currentYield {
+					electedFacility = facility
+					winningYield = currentYield
 				}
+
+			}
 		}
 
 		// if the maxYield is still 0 means we did not find a facility, otherwise we did and we store that
-		if maxYield != 0 && electedFacility != nil{
+		if maxYield != 0 && electedFacility != nil {
 
 			// Push loan assignment
 			loansToFacilities = append(loansToFacilities, assignment{
@@ -237,7 +237,7 @@ func main(){
 			electedFacility.Amount -= loan.Amount
 
 			// attribute the winning Yield to the facility
-			if val, ok := facilitiesYield[electedFacility.Id];  ok{
+			if val, ok := facilitiesYield[electedFacility.Id]; ok {
 				facilitiesYield[electedFacility.Id] = val + winningYield
 			} else {
 				facilitiesYield[electedFacility.Id] = winningYield
@@ -261,7 +261,7 @@ func main(){
 	for _, k := range keys {
 		facilitiesYieldList = append(facilitiesYieldList, []string{
 			strconv.FormatInt(int64(k), 10),
-			strconv.FormatFloat(Round(facilitiesYield[k] * 100)/100, 'f', -1, 64),
+			strconv.FormatFloat(Round(facilitiesYield[k]*100)/100, 'f', -1, 64),
 		})
 	}
 
@@ -272,7 +272,7 @@ func main(){
 		"facility_id",
 	})
 
-	for _, value:= range loansToFacilities {
+	for _, value := range loansToFacilities {
 		loansToFacilitiesList = append(loansToFacilitiesList, []string{
 			strconv.FormatInt(int64(value.loanId), 10),
 			strconv.FormatInt(int64(value.facilityId), 10),
