@@ -41,49 +41,49 @@ func ingestionFactory(filePath string) []interface{} {
 
 		case FACILITIES_PATH:
 			// we should handle parse errors on these in case csv is corrupted
-			amount, _ 		:= strconv.ParseFloat(line[0], 64)
-			interestRate, _ := strconv.ParseFloat(line[1], 64)
-			id, _ 			:= strconv.Atoi(line[2])
-			bankId, _ 		:= strconv.Atoi(line[3])
+			amount, _ 			:= strconv.ParseFloat(line[0], 64)
+			interestRate, _ 	:= strconv.ParseFloat(line[1], 64)
+			id, _ 				:= strconv.Atoi(line[2])
+			bankId, _ 			:= strconv.Atoi(line[3])
 
 			// we need a slice of pointers here because we would need to operate on the amount in the code
 			// and we dont want a copy we want to be able to change the value as we grant loans
 			result = append(result, &Facility{
-				Amount:     	amount,
-				InterestRate: 	interestRate,
-				Id:           	id,
-				BankId:       	bankId,
+				Amount:     		amount,
+				InterestRate: 		interestRate,
+				Id:           		id,
+				BankId:       		bankId,
 			})
 
 		case COVENANTS_PATH:
 			// we should handle parse errors on these in case csv is corrupted
-			facilityId, _ 			:= strconv.Atoi(line[0])
-			maxDefaultLikelihood, _ := strconv.ParseFloat(line[1], 64)
-			bankId, _ 				:= strconv.Atoi(line[2])
-			bannedState				:= line[3]
+			facilityId, _ 				:= strconv.Atoi(line[0])
+			maxDefaultLikelihood, _ 	:= strconv.ParseFloat(line[1], 64)
+			bankId, _ 					:= strconv.Atoi(line[2])
+			bannedState					:= line[3]
 
 			result = append(result, Covenant{
-				FacilityId:           facilityId,
-				MaxDefaultLikelihood: maxDefaultLikelihood,
-				BankId:               bankId,
-				BannedState:          bannedState,
+				FacilityId:           	facilityId,
+				MaxDefaultLikelihood: 	maxDefaultLikelihood,
+				BankId:               	bankId,
+				BannedState:          	bannedState,
 			})
 
 		case LOANS_PATH:
 
 			// we should handle parse errors on these in case csv is corrupted
-			interestRate, _ 		:= strconv.ParseFloat(line[0], 64)
-			amount, _ 				:= strconv.ParseFloat(line[1] ,64)
-			id, _ 					:= strconv.Atoi(line[2])
-			defaultLikelihood, _ 	:= strconv.ParseFloat(line[3], 64)
-			state 					:= line[4]
+			interestRate, _ 			:= strconv.ParseFloat(line[0], 64)
+			amount, _ 					:= strconv.ParseFloat(line[1] ,64)
+			id, _ 						:= strconv.Atoi(line[2])
+			defaultLikelihood, _ 		:= strconv.ParseFloat(line[3], 64)
+			state 						:= line[4]
 
 			result = append(result, Loan{
-				InterestRate:     	interestRate,
-				Amount: 			amount,
-				Id:           		id,
-				DefaultLikelihood:  defaultLikelihood,
-				State: 				state,
+				InterestRate:     		interestRate,
+				Amount: 				amount,
+				Id:           			id,
+				DefaultLikelihood:  	defaultLikelihood,
+				State: 					state,
 			})
 		}
 	}
@@ -182,8 +182,8 @@ func main(){
 	}
 
 	// Will use these 2 for the output data. Start with length of 1 but will push things in here
-	loansToFacilities := make([]assignment, 0)
-	facilitiesYield := make(map[int]float64)
+	loansToFacilities 	:= make([]assignment, 0)
+	facilitiesYield 	:= make(map[int]float64)
 
 	for i := 0; i < len(loans); i++ {
 
