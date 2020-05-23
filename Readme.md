@@ -10,7 +10,7 @@
 ```
 $> git clone: https://github.com/motiooon/Affirm-Go.git
 $> cd Affirm-Go
-$> go run Affirm
+$> go run Affirm-Go
 ```
 
 After that the 2 CSV files will be added to the root folder of the program.
@@ -19,4 +19,4 @@ After that the 2 CSV files will be added to the root folder of the program.
 
 #### Answers to questions:
 
-This is a re-write of the Node JS Code available here https://github.com/motiooon/affirm but written in Go. No other optimization has been made. Simple re-write.  
+This is a Go re-write of Affirm code challenge previously written in Node JS (Code available here https://github.com/motiooon/affirm). No other optimizations have been made.  
